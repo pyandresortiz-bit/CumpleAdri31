@@ -80,6 +80,12 @@
             flex: 0 0 auto; height: 400px; padding: 10px; background: #fff; border-radius: 16px;
             box-shadow: 0 12px 28px rgba(166,106,113,0.18);
         }
+        .card { position: relative; }
+        .card video { display: block; height: 100%; width: auto; border-radius: 9px; background: #000; cursor: pointer; }
+        .card .sonido {
+            position: absolute; right: 18px; bottom: 18px; font-size: 1rem; line-height: 1;
+            background: rgba(255,255,255,0.8); border-radius: 999px; padding: 6px 9px; pointer-events: none;
+        }
         .card img { display: block; height: 100%; width: auto; border-radius: 9px; object-fit: contain; background: #f6eef0; }
         @media (max-width: 600px) { .card { height: 380px; } }
         @media (prefers-reduced-motion: reduce) { .track { animation: none; } .marquee { overflow-x: auto; } }
@@ -107,13 +113,15 @@
         .videos { position: relative; z-index: 10; max-width: 800px; margin: 0 auto; padding: 0 20px 20px; text-align: center; }
         .youtube-wrapper {
             position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(166,106,113,0.15); background: #000; margin-bottom: 40px; border: 6px solid #fff;
+            box-shadow: 0 15px 35px rgba(166,106,113,0.15); background: #000; margin-bottom: 22px; border: 6px solid #fff;
         }
         .youtube-wrapper iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-        .video-local {
-            display: block; width: auto; max-width: 100%; max-height: 80vh; margin: 0 auto 40px;
-            border: 6px solid #fff; border-radius: 12px; background: #000; box-shadow: 0 15px 35px rgba(166,106,113,0.15);
+        .yt-boton {
+            display: inline-block; margin-top: 4px; padding: 10px 22px; border-radius: 999px;
+            color: var(--text-main); background: rgba(255,255,255,0.85); border: 1px solid rgba(166,106,113,0.4);
+            text-decoration: none; font-size: 1rem; box-shadow: 0 4px 14px rgba(166,106,113,0.15);
         }
+        .yt-boton:hover { background: #f6dfe3; }
 
         footer { position: relative; z-index: 10; margin: 20px 0 50px; text-align: center; font-size: 1.1rem; font-style: italic; color: var(--text-light); }
         footer a { color: var(--text-light); font-size: 0.85rem; opacity: .7; text-decoration: underline dotted; }
@@ -148,13 +156,12 @@
         <div class="frase-adorno">✦ ✦ ✦</div>
     </section>
 
-    <!-- CARRUSEL (las fotos se cargan desde el array FOTOS del script) -->
+    <!-- CARRUSEL (las fotos se cargan desde el array RECUERDOS del script) -->
     <h2 class="section-title recuerdos-titulo">Nuestros Recuerdos</h2>
     <div class="marquee" id="marquee"><div class="track" id="track"></div></div>
 
-    <!-- VIDEOS -->
+    <!-- VIDEO DE YOUTUBE (al final) -->
     <section class="videos">
-        <h2 class="section-title">Con todo nuestro amor</h2>
         <div class="youtube-wrapper">
             <iframe id="yt"
                 src="https://www.youtube.com/embed/a8UXGaE6ZSM?rel=0&enablejsapi=1"
@@ -162,13 +169,7 @@
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen></iframe>
         </div>
-        <video class="video-local" controls playsinline preload="metadata">
-            <source src="IMG_5112.mp4" type="video/mp4">
-            <source src="IMG_5112.mov" type="video/quicktime">
-        </video>
-        <video class="video-local" controls playsinline preload="metadata">
-            <source src="video_dedicatoria.mp4" type="video/mp4">
-        </video>
+        <a class="yt-boton" href="https://youtu.be/a8UXGaE6ZSM?feature=shared" target="_blank" rel="noopener">Ver video sorpresa en YouTube ❤️</a>
     </section>
 
     <footer>
@@ -179,12 +180,13 @@
     <script>
         // ====== CONTENIDO EDITABLE ======
         // Para agregar más fotos: súbelas a la carpeta "fotos/" y añade su ruta aquí.
-        const FOTOS = [
+        // Fotos (.jpg) y videos (.mp4) del carrusel, en el orden en que aparecen.
+        const RECUERDOS = [
             'fotos/foto-01.jpg', 'fotos/foto-02.jpg', 'fotos/foto-03.jpg', 'fotos/foto-04.jpg',
-            'fotos/foto-05.jpg', 'fotos/foto-06.jpg', 'fotos/foto-07.jpg', 'fotos/foto-08.jpg',
+            'fotos/foto-05.jpg', 'fotos/foto-06.jpg', 'fotos/foto-07.jpg', 'fotos/foto-08.jpg', 'IMG_5112.mp4',
             'fotos/foto-09.jpg', 'fotos/foto-10.jpg', 'fotos/foto-11.jpg', 'fotos/foto-12.jpg',
             'fotos/foto-13.jpg', 'fotos/foto-14.jpg', 'fotos/foto-15.jpg', 'fotos/foto-16.jpg',
-            'fotos/foto-17.jpg', 'fotos/foto-18.jpg', 'fotos/foto-19.jpg', 'fotos/foto-20.jpg',
+            'fotos/foto-17.jpg', 'fotos/foto-18.jpg', 'fotos/foto-19.jpg', 'fotos/foto-20.jpg', 'video_dedicatoria.mp4',
             'fotos/foto-21.jpg', 'fotos/foto-22.jpg', 'fotos/foto-23.jpg',
             'fotos/foto-24.jpg', 'fotos/foto-25.jpg', 'fotos/foto-26.jpg', 'fotos/foto-27.jpg', 'fotos/foto-28.jpg', 'fotos/foto-29.jpg'
         ];
@@ -198,7 +200,7 @@
             'Nuestra alegría todos los días'
         ];
         const VOLUMEN = 0.25;
-        const SEGUNDOS_POR_FOTO = 6; // velocidad del carrusel
+        const PX_POR_SEGUNDO = 30; // velocidad del carrusel (lento y sutil)
 
         // ====== Partículas ======
         const sp = document.getElementById('sparkles');
@@ -214,28 +216,43 @@
         // ====== 1. Carrusel ======
         const marquee = document.getElementById('marquee');
         const track = document.getElementById('track');
-        FOTOS.forEach((src, i) => {
+        const esVideo = (src) => /\.(mp4|mov|webm)$/i.test(src);
+        RECUERDOS.forEach((src, i) => {
             const card = document.createElement('div');
             card.className = 'card';
-            const img = new Image();
-            img.src = src;
-            img.alt = `Recuerdo familiar ${i + 1}`;
-            img.decoding = 'async';
-            card.appendChild(img);
+            if (esVideo(src)) {
+                const v = document.createElement('video');
+                v.src = src;
+                v.autoplay = v.loop = v.muted = v.playsInline = true;
+                v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+                v.preload = 'auto';
+                card.appendChild(v);
+                const ic = document.createElement('span');
+                ic.className = 'sonido'; ic.textContent = '🔇';
+                card.appendChild(ic);
+            } else {
+                const img = new Image();
+                img.src = src;
+                img.alt = `Recuerdo familiar ${i + 1}`;
+                img.decoding = 'async';
+                card.appendChild(img);
+            }
             track.appendChild(card);
         });
         const originales = Array.from(track.children);
-        Promise.race([
-            Promise.all(Array.from(track.querySelectorAll('img')).map(im =>
-                im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; }))),
-            new Promise(r => setTimeout(r, 10000))
-        ]).then(() => {
+        const esperas = Array.from(track.querySelectorAll('img, video')).map(el => {
+            if (el.tagName === 'IMG') return el.complete ? 0 : new Promise(r => { el.onload = el.onerror = r; });
+            return el.readyState >= 1 ? 0 : new Promise(r => { el.onloadedmetadata = el.onerror = r; });
+        });
+        Promise.race([Promise.all(esperas), new Promise(r => setTimeout(r, 10000))]).then(() => {
             originales.forEach(c => {
                 const copia = c.cloneNode(true);
                 copia.setAttribute('aria-hidden', 'true');
+                copia.querySelectorAll('video').forEach(v => { v.muted = true; v.play().catch(() => {}); });
                 track.appendChild(copia);
             });
-            track.style.animationDuration = `${FOTOS.length * SEGUNDOS_POR_FOTO}s`;
+            track.querySelectorAll('.card video').forEach(enlazarVideoCarrusel);
+            track.style.animationDuration = `${Math.round(track.scrollWidth / 2 / PX_POR_SEGUNDO)}s`;
             marquee.classList.add('listo');
         });
         marquee.addEventListener('touchstart', () => marquee.classList.add('pausado'), {passive: true});
@@ -317,12 +334,23 @@
             videosActivos = videoInicia.set.size;
             if (videosActivos === 0 && quiereMusica && arrancada) reproducir();
         }
-        document.querySelectorAll('video.video-local').forEach((v, i) => {
-            const id = 'local' + i;
-            v.addEventListener('play', () => videoInicia(id));
-            v.addEventListener('playing', () => videoInicia(id));
-            ['pause', 'ended'].forEach(ev => v.addEventListener(ev, () => videoTermina(id)));
-        });
+        // Videos del carrusel: van en silencio y en bucle; al tocarlos se activa/quita el sonido
+        let nVideo = 0;
+        function enlazarVideoCarrusel(v) {
+            const id = 'carrusel' + (nVideo++);
+            const icono = v.parentElement.querySelector('.sonido');
+            const sincronizar = () => {
+                const conSonido = !v.muted && !v.paused;
+                if (icono) icono.textContent = v.muted ? '🔇' : '🔊';
+                if (conSonido) videoInicia(id); else videoTermina(id);
+            };
+            v.addEventListener('click', () => {
+                v.muted = !v.muted;
+                if (!v.muted) v.play().catch(() => {});
+                sincronizar();
+            });
+            ['volumechange', 'pause', 'ended', 'play'].forEach(ev => v.addEventListener(ev, sincronizar));
+        }
 
         // YouTube (IFrame API)
         function onYouTubeIframeAPIReady() {
