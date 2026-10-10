@@ -132,65 +132,91 @@
             margin-bottom: 30px;
         }
 
-        .polaroid-frame {
-            background: white;
-            padding: 15px 15px 50px 15px;
-            border-radius: 4px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.08), 0 5px 10px rgba(0,0,0,0.04);
-            max-width: 500px;
-            margin: 0 auto 50px auto;
-            position: relative;
-            transform: rotate(-1deg);
-            transition: transform 0.3s ease;
+        .dedicatoria {
+            max-width: 620px;
+            margin: 0 auto 70px;
+            padding: 36px 30px;
+            background: rgba(255,255,255,0.65);
+            border: 1px solid rgba(166,106,113,0.25);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(166,106,113,0.10);
+            font-size: clamp(1.02rem, 2.4vw, 1.2rem);
+            line-height: 1.85;
         }
-        
-        .polaroid-frame:hover {
-            transform: rotate(0deg) scale(1.02);
-        }
-
-        .carousel-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 3/4; /* Proporción ideal para fotos verticales o cuadradas */
-            overflow: hidden;
-            border-radius: 2px;
-            background-color: #f0f0f0;
-        }
-
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .slide.active {
-            opacity: 1;
-            z-index: 2;
-        }
-
-        .slide img, .slide video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .polaroid-caption {
-            position: absolute;
-            bottom: 12px;
-            left: 0;
-            width: 100%;
-            text-align: center;
+        .dedicatoria p + p { margin-top: 16px; }
+        .dedicatoria .firma {
             font-family: 'Great Vibes', cursive;
-            font-size: 1.8rem;
+            font-size: 2rem;
             color: var(--text-main);
         }
+
+        /* Carrusel horizontal continuo (marquee) */
+        .marquee {
+            position: relative;
+            width: 100vw;
+            left: 50%;
+            margin-left: -50vw;
+            overflow: hidden;
+            padding: 20px 0 30px;
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+        }
+        .track {
+            display: flex;
+            gap: 22px;
+            width: max-content;
+            animation: scroll 90s linear infinite;
+        }
+        .marquee:hover .track,
+        .marquee.pausado .track { animation-play-state: paused; }
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to   { transform: translateX(calc(-50% - 11px)); }
+        }
+        .card {
+            flex: 0 0 auto;
+            height: 400px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 16px;
+            box-shadow: 0 12px 28px rgba(166,106,113,0.18);
+        }
+        .card img, .card video {
+            display: block;
+            height: 100%;
+            width: auto;
+            border-radius: 9px;
+            object-fit: contain;
+            background: #f6eef0;
+        }
+        .card video { aspect-ratio: 16 / 9; }
+        @media (max-width: 600px) { .card { height: 380px; } }
+        @media (prefers-reduced-motion: reduce) {
+            .track { animation: none; }
+            .marquee { overflow-x: auto; }
+        }
+
+        #btn-musica {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 100;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background: rgba(255,255,255,0.8);
+            border: 1px solid rgba(166,106,113,0.35);
+            border-radius: 999px;
+            padding: 8px 16px;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 14px rgba(166,106,113,0.15);
+            transition: background .3s;
+        }
+        #btn-musica.on { background: #f6dfe3; }
+
+        footer a { color: var(--text-light); font-size: 0.85rem; opacity: .7; text-decoration: underline dotted; }
+        footer a:hover { opacity: 1; }
 
         footer {
             margin-top: 40px;
@@ -201,6 +227,9 @@
     </style>
 </head>
 <body>
+
+    <button id="btn-musica" type="button" aria-pressed="false">🎵 Música</button>
+    <audio id="bgm" src="musica.mp3" loop preload="none"></audio>
 
     <!-- Contenedor para las partículas de fondo -->
     <div class="sparkle-container" id="sparkles"></div>
@@ -225,52 +254,42 @@
         </section>
 
         <section>
+            <div class="dedicatoria">
+                <p>Eres una mamá increíble: la que nos abraza cuando más lo necesitamos, la que convierte cualquier día común en un recuerdo bonito y la que llena la casa de alegría con solo sonreír.</p>
+                <p>Tus dos hombrecitos te aman con todo su corazón, y papá también: eres su mundo entero, su lugar seguro y su persona favorita.</p>
+                <p>Hoy celebramos tu vida, tu risa y todo lo que eres. ¡Gracias por tanto amor, y que este nuevo año te devuelva todo lo bueno que tú nos das!</p>
+                <p class="firma">Con todo nuestro amor ♥</p>
+            </div>
+        </section>
+
+        <section>
             <h2 class="section-title">Nuestros Recuerdos</h2>
-            
-            <div class="polaroid-frame">
-                <div class="carousel-container" id="carousel">
-                    
-                    <!-- Archivos listados exactamente como se solicitó -->
-                    <div class="slide active">
-                        <img src="image.png" alt="Recuerdo familiar 1">
-                    </div>
-                    <div class="slide">
-                        <img src="image_2.png" alt="Recuerdo familiar 2">
-                    </div>
-                    <div class="slide">
-                        <img src="image_3.png" alt="Recuerdo familiar 3">
-                    </div>
-                    <div class="slide">
-                        <img src="image_4.png" alt="Recuerdo familiar 4">
-                    </div>
-                    <div class="slide">
-                        <img src="image_5.png" alt="Recuerdo familiar 5">
-                    </div>
-                    <div class="slide">
-                        <img src="image_6.png" alt="Recuerdo familiar 6">
-                    </div>
-                    <div class="slide">
-                        <img src="image_7.png" alt="Recuerdo familiar 7">
-                    </div>
-                    <div class="slide">
-                        <img src="image_8.png" alt="Recuerdo familiar 8">
-                    </div>
-                    
-                    <!-- Video local con atributos para autoplay en dispositivos móviles -->
-                    <div class="slide">
-                        <video autoplay muted loop playsinline>
+        </section>
+    </main>
+
+    <div class="marquee" id="marquee">
+        <div class="track" id="track">
+                    <div class="card"><img src="image.png" alt="Recuerdo familiar 1"></div>
+                    <div class="card"><img src="image_2.png" alt="Recuerdo familiar 2"></div>
+                    <div class="card"><img src="image_3.png" alt="Recuerdo familiar 3"></div>
+                    <div class="card"><img src="image_4.png" alt="Recuerdo familiar 4"></div>
+                    <div class="card"><img src="image_5.png" alt="Recuerdo familiar 5"></div>
+                    <div class="card"><img src="image_6.png" alt="Recuerdo familiar 6"></div>
+                    <div class="card"><img src="image_7.png" alt="Recuerdo familiar 7"></div>
+                    <div class="card"><img src="image_8.png" alt="Recuerdo familiar 8"></div>
+                    <div class="card">
+                        <video autoplay muted loop playsinline preload="metadata">
                             <source src="IMG_5112.mp4" type="video/mp4">
                             <source src="IMG_5112.mov" type="video/quicktime">
                         </video>
                     </div>
+        </div>
+    </div>
 
-                </div>
-                <div class="polaroid-caption">Con amor...</div>
-            </div>
-        </section>
-
+    <main class="content-wrapper" style="padding-top:20px">
         <footer>
-            Hecho con todo nuestro corazón para ti.
+            Hecho con todo nuestro corazón para ti.<br><br>
+            <a href="imprimir_tarjetas.html">Tarjetas para imprimir</a>
         </footer>
     </main>
 
@@ -298,24 +317,37 @@
                 sparklesContainer.appendChild(sparkle);
             }
 
-            // 2. Lógica del Carrusel (Slideshow)
-            const slides = document.querySelectorAll('.slide');
-            let currentIndex = 0;
-            const timeInterval = 4000; // 4 segundos entre cambios
+            // 2. Carrusel continuo: duplicamos las tarjetas para el bucle infinito
+            const track = document.getElementById('track');
+            const marquee = document.getElementById('marquee');
+            Array.from(track.children).forEach(c => {
+                const copia = c.cloneNode(true);
+                copia.setAttribute('aria-hidden', 'true');
+                track.appendChild(copia);
+            });
+            // Pausa con el dedo (en celular)
+            marquee.addEventListener('touchstart', () => marquee.classList.add('pausado'), {passive: true});
+            ['touchend', 'touchcancel'].forEach(ev =>
+                marquee.addEventListener(ev, () => marquee.classList.remove('pausado'), {passive: true}));
 
-            function nextSlide() {
-                // Quitamos la clase active de la imagen/video actual
-                slides[currentIndex].classList.remove('active');
-                
-                // Avanzamos al siguiente índice (volviendo a 0 si llegamos al final)
-                currentIndex = (currentIndex + 1) % slides.length;
-                
-                // Agregamos la clase active a la nueva imagen/video
-                slides[currentIndex].classList.add('active');
-            }
-
-            // Iniciar el intervalo
-            setInterval(nextSlide, timeInterval);
+            // 3. Música de fondo (inicia solo al tocar el botón, volumen bajo)
+            const audio = document.getElementById('bgm');
+            const btn = document.getElementById('btn-musica');
+            audio.volume = 0.28;
+            btn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play().then(() => {
+                        btn.classList.add('on');
+                        btn.textContent = '🎵 Pausar';
+                        btn.setAttribute('aria-pressed', 'true');
+                    }).catch(() => {});
+                } else {
+                    audio.pause();
+                    btn.classList.remove('on');
+                    btn.textContent = '🎵 Música';
+                    btn.setAttribute('aria-pressed', 'false');
+                }
+            });
 
         });
     </script>
