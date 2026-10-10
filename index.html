@@ -116,6 +116,17 @@
             box-shadow: 0 15px 35px rgba(166,106,113,0.15); background: #000; margin-bottom: 22px; border: 6px solid #fff;
         }
         .youtube-wrapper iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+        /* ---------- Transición festiva antes de YouTube ---------- */
+        .transicion { position: relative; z-index: 10; margin: 40px auto 0; padding: 70px 20px 30px; text-align: center; overflow: hidden; }
+        #fuegos { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+        .transicion h2 {
+            position: relative; font-family: 'Great Vibes', cursive; font-weight: 400; color: var(--text-main);
+            font-size: clamp(2.2rem, 7vw, 3.4rem); line-height: 1.2; text-shadow: 0 2px 12px rgba(255,255,255,0.9);
+        }
+        .divisor { position: relative; display: flex; align-items: center; justify-content: center; gap: 14px; margin: 14px auto 0; max-width: 360px; color: #d4a45a; }
+        .divisor::before, .divisor::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #d8b27a, transparent); }
+        .youtube-wrapper { box-shadow: 0 15px 35px rgba(166,106,113,0.18), 0 0 0 2px rgba(212,164,90,0.55), 0 0 28px rgba(212,164,90,0.35) !important; }
+
         .yt-boton {
             display: inline-block; margin-top: 4px; padding: 10px 22px; border-radius: 999px;
             color: var(--text-main); background: rgba(255,255,255,0.85); border: 1px solid rgba(166,106,113,0.4);
@@ -159,6 +170,13 @@
     <!-- CARRUSEL (las fotos se cargan desde el array RECUERDOS del script) -->
     <h2 class="section-title recuerdos-titulo">Nuestros Recuerdos</h2>
     <div class="marquee" id="marquee"><div class="track" id="track"></div></div>
+
+    <!-- TRANSICIÓN FESTIVA -->
+    <section class="transicion" id="transicion">
+        <canvas id="fuegos"></canvas>
+        <h2>✨ Te tenemos una sorpresa... ✨</h2>
+        <div class="divisor"><span>♥</span><span>✦</span><span>♥</span></div>
+    </section>
 
     <!-- VIDEO DE YOUTUBE (al final) -->
     <section class="videos">
@@ -367,6 +385,47 @@
         const apiYT = document.createElement('script');
         apiYT.src = 'https://www.youtube.com/iframe_api';
         document.head.appendChild(apiYT);
+
+        // ====== Fuegos artificiales sutiles (solo corren cuando la sección está a la vista) ======
+        (function () {
+            const sec = document.getElementById('transicion');
+            const cv = document.getElementById('fuegos');
+            const ctx = cv.getContext('2d');
+            if (!ctx || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const COLORES = ['#f3d28a', '#e8b95f', '#fff3c4', '#f4b6c2', '#ffffff'];
+            let W, H, chispas = [], visible = false, raf = 0, ultimo = 0, proximo = 0;
+            function medir() {
+                const d = Math.min(devicePixelRatio || 1, 2);
+                W = cv.clientWidth; H = cv.clientHeight;
+                cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+            }
+            function estallido() {
+                const x = W * (0.12 + Math.random() * 0.76), y = H * (0.12 + Math.random() * 0.55);
+                const n = 26 + Math.floor(Math.random() * 12), c = COLORES[Math.floor(Math.random() * COLORES.length)];
+                for (let i = 0; i < n; i++) {
+                    const a = (i / n) * Math.PI * 2, v = 0.6 + Math.random() * 1.6;
+                    chispas.push({x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vida: 1, c});
+                }
+            }
+            function cuadro(t) {
+                raf = requestAnimationFrame(cuadro);
+                const dt = Math.min((t - ultimo) / 16.7, 3); ultimo = t;
+                ctx.clearRect(0, 0, W, H);
+                if (t > proximo) { estallido(); proximo = t + 900 + Math.random() * 1300; }
+                chispas = chispas.filter(p => p.vida > 0);
+                for (const p of chispas) {
+                    p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.018 * dt; p.vx *= 0.985; p.vida -= 0.011 * dt;
+                    ctx.globalAlpha = Math.max(p.vida, 0); ctx.fillStyle = p.c;
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 1.6, 0, 6.283); ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+            }
+            new IntersectionObserver(([e]) => {
+                if (e.isIntersecting && !visible) { visible = true; medir(); ultimo = performance.now(); raf = requestAnimationFrame(cuadro); }
+                else if (!e.isIntersecting && visible) { visible = false; cancelAnimationFrame(raf); chispas = []; ctx.clearRect(0, 0, W, H); }
+            }).observe(sec);
+            addEventListener('resize', () => { if (visible) medir(); });
+        })();
     </script>
 </body>
 </html>
