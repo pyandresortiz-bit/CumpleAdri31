@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarjetas para imprimir</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+    @page { size: A4; margin: 10mm; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Playfair Display', serif; color: #6b5256; background: #f3eded; }
+    .hoja { width: 190mm; margin: 10mm auto; background: #fff; padding: 6mm; }
+    .tarjeta {
+        border: 2px dashed #a66a71;
+        padding: 10mm 12mm;
+        text-align: center;
+        height: 132mm;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        background: #fff;
+    }
+    .corte { text-align: center; font-size: 9pt; color: #9c8487; margin: 4mm 0; letter-spacing: 1px; }
+    h1 { font-family: 'Great Vibes', cursive; color: #a66a71; font-size: 36pt; font-weight: 400; line-height: 1.15; margin-bottom: 8mm; }
+    .mensaje { font-size: 15pt; line-height: 1.5; margin-bottom: 8mm; max-width: 150mm; }
+    .condicion { font-style: italic; color: #a66a71; display: block; margin-top: 4mm; }
+    .estado { font-family: 'Great Vibes', cursive; font-size: 26pt; color: #a66a71; border-top: 1px solid #e3c6cb; border-bottom: 1px solid #e3c6cb; padding: 3mm 8mm; }
+    .arriba { font-size: 15pt; margin-bottom: 6mm; }
+    .tarjeta img { width: 62mm; height: 62mm; image-rendering: pixelated; margin-bottom: 6mm; }
+    .dibujo { width: 100%; flex: 1; min-height: 28mm; border: 2px dashed #d8a5ad; border-radius: 6px; background: #fffafb; font-size: 10pt; color: #b99aa0; padding: 2mm; text-align: left; }
+    @media print {
+        body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .hoja { width: auto; margin: 0; padding: 0; break-after: page; page-break-after: always; }
+        .hoja:last-child { break-after: auto; page-break-after: auto; }
+        .tarjeta { height: 125mm; }
+    }
+</style>
+</head>
+<body>
+
+<div class="hoja">
+    <div class="tarjeta">
+        <h1>¡Feliz Cumpleaños a la Reina de la Casa!</h1>
+        <p class="mensaje">Tenés una sorpresa esperando... Entrá a revisar tu cuenta del banco.
+            <span class="condicion">Condición exclusiva: ¡Permitido usarlo únicamente en vos, en tus gustos y sin culpas!</span>
+        </p>
+        <div class="estado">Acreditado con amor infinito</div>
+    </div>
+    <p class="corte">✂ - - - - - - - - - - - - - - - - - - - - - - - - - - - ✂</p>
+</div>
+
+<div class="hoja">
+    <div class="tarjeta">
+        <p class="arriba">Escaneá con tu celular para ver tu regalo especial</p>
+        <img src="qr_regalo.png" alt="Código QR">
+        <div class="dibujo">Espacio para el dibujo o la dedicatoria de los peques ✎</div>
+    </div>
+    <p class="corte">✂ - - - - - - - - - - - - - - - - - - - - - - - - - - - ✂</p>
+</div>
+
+</body>
+</html>
