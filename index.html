@@ -55,9 +55,11 @@
             font-size: clamp(3.5rem, 8vw, 5rem); line-height: 1.1; margin-bottom: 14px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.03); font-weight: 400;
         }
+        h2.subtitle { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 400; color: var(--text-dark); margin-bottom: 15px; }
+        .recuerdos-titulo { position: relative; z-index: 10; text-align: center; margin-top: 10px; }
         p.date-detail {
             font-style: italic; color: var(--text-light);
-            font-size: clamp(0.95rem, 2.2vw, 1.15rem); letter-spacing: 1px; margin-bottom: 36px;
+            font-size: clamp(0.95rem, 2.2vw, 1.15rem); letter-spacing: 1px; margin-bottom: 10px;
         }
         .section-title {
             font-family: 'Great Vibes', cursive; color: var(--text-main); font-weight: 400;
@@ -83,7 +85,7 @@
         @media (prefers-reduced-motion: reduce) { .track { animation: none; } .marquee { overflow-x: auto; } }
 
         /* ---------- 2. Frases animadas ---------- */
-        .frases { position: relative; z-index: 10; max-width: 800px; margin: 30px auto 60px; padding: 0 20px; text-align: center; }
+        .frases { position: relative; z-index: 10; max-width: 800px; margin: 10px auto 20px; padding: 0 20px; text-align: center; }
         .frase-escena { position: relative; height: 150px; display: flex; align-items: center; justify-content: center; }
         .frase {
             font-family: 'Great Vibes', cursive; color: var(--text-main);
@@ -136,20 +138,21 @@
     <!-- ENCABEZADO -->
     <header class="content-wrapper">
         <h1>Mi mami más hermosa</h1>
+        <h2 class="subtitle">La más guapa, la más churra</h2>
         <p class="date-detail">11 de octubre • 31 años de glamour y belleza insuperable</p>
-        <h2 class="section-title">Nuestros Recuerdos</h2>
     </header>
 
-    <!-- 1. CARRUSEL (las fotos se cargan desde el array FOTOS del script) -->
-    <div class="marquee" id="marquee"><div class="track" id="track"></div></div>
-
-    <!-- 2. FRASES ANIMADAS -->
+    <!-- FRASES ANIMADAS (encima del carrusel) -->
     <section class="frases" aria-live="polite">
         <div class="frase-escena"><div class="frase" id="frase"></div></div>
         <div class="frase-adorno">✦ ✦ ✦</div>
     </section>
 
-    <!-- 3. VIDEO DEDICATORIA -->
+    <!-- CARRUSEL (las fotos se cargan desde el array FOTOS del script) -->
+    <h2 class="section-title recuerdos-titulo">Nuestros Recuerdos</h2>
+    <div class="marquee" id="marquee"><div class="track" id="track"></div></div>
+
+    <!-- VIDEOS -->
     <section class="videos">
         <h2 class="section-title">Con todo nuestro amor</h2>
         <div class="youtube-wrapper">
