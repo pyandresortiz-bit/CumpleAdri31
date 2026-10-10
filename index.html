@@ -132,24 +132,6 @@
             margin-bottom: 30px;
         }
 
-        .dedicatoria {
-            max-width: 620px;
-            margin: 0 auto 70px;
-            padding: 36px 30px;
-            background: rgba(255,255,255,0.65);
-            border: 1px solid rgba(166,106,113,0.25);
-            border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(166,106,113,0.10);
-            font-size: clamp(1.02rem, 2.4vw, 1.2rem);
-            line-height: 1.85;
-        }
-        .dedicatoria p + p { margin-top: 16px; }
-        .dedicatoria .firma {
-            font-family: 'Great Vibes', cursive;
-            font-size: 2rem;
-            color: var(--text-main);
-        }
-
         /* Carrusel horizontal continuo (marquee) */
         .marquee {
             position: relative;
@@ -228,7 +210,7 @@
 </head>
 <body>
 
-    <button id="btn-musica" type="button" aria-pressed="false">🎵 Música</button>
+    <button id="btn-musica" type="button" aria-pressed="false">🎵 Tocar para escuchar música</button>
     <audio id="bgm" src="musica.mp3" loop preload="none"></audio>
 
     <!-- Contenedor para las partículas de fondo -->
@@ -250,15 +232,6 @@
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                     allowfullscreen>
                 </iframe>
-            </div>
-        </section>
-
-        <section>
-            <div class="dedicatoria">
-                <p>Eres una mamá increíble: la que nos abraza cuando más lo necesitamos, la que convierte cualquier día común en un recuerdo bonito y la que llena la casa de alegría con solo sonreír.</p>
-                <p>Tus dos hombrecitos te aman con todo su corazón, y papá también: eres su mundo entero, su lugar seguro y su persona favorita.</p>
-                <p>Hoy celebramos tu vida, tu risa y todo lo que eres. ¡Gracias por tanto amor, y que este nuevo año te devuelva todo lo bueno que tú nos das!</p>
-                <p class="firma">Con todo nuestro amor ♥</p>
             </div>
         </section>
 
@@ -330,24 +303,39 @@
             ['touchend', 'touchcancel'].forEach(ev =>
                 marquee.addEventListener(ev, () => marquee.classList.remove('pausado'), {passive: true}));
 
-            // 3. Música de fondo (inicia solo al tocar el botón, volumen bajo)
+            // 3. Música de fondo (el navegador exige un toque previo: botón o primer toque en pantalla)
             const audio = document.getElementById('bgm');
             const btn = document.getElementById('btn-musica');
-            audio.volume = 0.28;
+            audio.volume = 0.25;
+            const ETQ_OFF = '🎵 Tocar para escuchar música';
+            const ETQ_ON = '🎵 Pausar música';
+
+            function estado(sonando) {
+                btn.classList.toggle('on', sonando);
+                btn.textContent = sonando ? ETQ_ON : ETQ_OFF;
+                btn.setAttribute('aria-pressed', String(sonando));
+            }
+            function reproducir() {
+                audio.muted = false;
+                audio.volume = 0.25;
+                return audio.play().then(() => { estado(true); return true; })
+                                   .catch(() => { estado(false); return false; });
+            }
+
             btn.addEventListener('click', () => {
-                if (audio.paused) {
-                    audio.play().then(() => {
-                        btn.classList.add('on');
-                        btn.textContent = '🎵 Pausar';
-                        btn.setAttribute('aria-pressed', 'true');
-                    }).catch(() => {});
-                } else {
-                    audio.pause();
-                    btn.classList.remove('on');
-                    btn.textContent = '🎵 Música';
-                    btn.setAttribute('aria-pressed', 'false');
-                }
+                intentoInicial = true;
+                if (audio.paused) reproducir(); else { audio.pause(); estado(false); }
             });
+
+            // Primer toque en cualquier parte: intenta iniciar la música
+            let intentoInicial = false;
+            const primerToque = (e) => {
+                if (intentoInicial || btn.contains(e.target)) return;
+                intentoInicial = true;
+                reproducir();
+            };
+            ['pointerdown', 'touchend', 'keydown'].forEach(ev =>
+                document.addEventListener(ev, primerToque, {once: false, passive: true}));
 
         });
     </script>
